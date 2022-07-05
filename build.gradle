@@ -1,0 +1,28 @@
+plugins {
+    id 'java'
+    id 'maven'
+}
+
+version '1.0'
+
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
+repositories {
+    mavenCentral()
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+group = "ru.hixon"
+
+dependencies {
+    testCompile 'junit:junit:4.13.2'
+
+    implementation files("${System.properties['java.home']}/../lib/tools.jar")
+}
