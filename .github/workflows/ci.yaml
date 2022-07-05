@@ -12,5 +12,5 @@ jobs:
         with:
           java-version: '8'
           distribution: 'adopt'
-      - name: Build with Gradle
+      - name: Test with Gradle
         run: ./gradlew clean test
