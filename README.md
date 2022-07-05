@@ -49,7 +49,7 @@ public class ClassWithEnum2ConstructorBad {
 
 - [ ] User friendly error messages
 - [ ] Publish annotation processor to maven central
-- [ ] Unit tests for all possibly cases
+- [X] Unit tests for all possibly cases
 - [ ] Integration tests for gradle
 - [ ] Integration tests for maven
 - [ ] Integration tests for spring

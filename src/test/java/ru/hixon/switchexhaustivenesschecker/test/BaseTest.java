@@ -1,5 +1,6 @@
 package ru.hixon.switchexhaustivenesschecker.test;
 
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 import ru.hixon.switchexhaustivenesschecker.SwitchExhaustiveCheckerProcessor;
@@ -18,6 +19,27 @@ public abstract class BaseTest {
     @Rule
     public final TemporaryFolder tempDir = new TemporaryFolder();
 
+    protected void withMissedBranchesBase(String className, String classPath, String errorMessage) throws IOException {
+        CompilationResult compilationResult = compileClass(className, classPath);
+        String diagnosticsAsString = compilationResult.getDiagnosticsAsString();
+        Assert.assertFalse(diagnosticsAsString, compilationResult.isOk());
+
+        Assert.assertTrue(diagnosticsAsString, diagnosticsAsString.contains(errorMessage));
+
+        // check without annotation processor
+        compilationResult = compileClass(className, classPath, true);
+        Assert.assertTrue(compilationResult.getDiagnosticsAsString(), compilationResult.isOk());
+    }
+
+    protected void withoutMissedBranchesTest(String className, String classPath) throws IOException {
+        CompilationResult compilationResult = compileClass(className, classPath);
+        Assert.assertTrue(compilationResult.getDiagnosticsAsString(), compilationResult.isOk());
+
+        // check without annotation processor
+        compilationResult = compileClass(className, classPath, true);
+        Assert.assertTrue(compilationResult.getDiagnosticsAsString(), compilationResult.isOk());
+    }
+
     protected CompilationResult compileClass(String className, String classPath) throws IOException {
         return compileClass(className, classPath, false);
     }
@@ -27,7 +49,6 @@ public abstract class BaseTest {
 
         if (removeSwitchExhaustiveAnnotation) {
             classLines = classLines.replace("@SwitchExhaustive", "");
-            int a = 5;
         }
 
         JavaFileObject file = new JavaSourceFromString(className, classLines);
