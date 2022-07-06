@@ -3,10 +3,10 @@ package ru.hixon.switchexhaustivenesschecker;
 import com.sun.source.util.TaskEvent;
 import com.sun.source.util.TaskListener;
 
-final class AnalyzeTaskListener implements TaskListener {
+class AnalyzeTaskListener implements TaskListener {
     private final SwitchExhaustiveCheckerProcessor processor;
 
-    public AnalyzeTaskListener(final SwitchExhaustiveCheckerProcessor processor) {
+    AnalyzeTaskListener(final SwitchExhaustiveCheckerProcessor processor) {
         this.processor = processor;
     }
 

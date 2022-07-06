@@ -27,7 +27,7 @@ final class TestMethodTreePathScanner extends TreePathScanner<Void, Void> {
     private final Set<MethodTree> methodsForAnalysis;
     private final Name classForAnalysis;
 
-    public TestMethodTreePathScanner(
+    TestMethodTreePathScanner(
             final Trees trees,
             final CompilationUnitTree compilationUnitTree,
             final Messager messager,

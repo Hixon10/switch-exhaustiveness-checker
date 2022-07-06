@@ -14,6 +14,11 @@ import java.util.*;
 import com.sun.source.tree.*;
 import com.sun.source.util.*;
 
+/**
+ * An annotation processor, which checks that
+ * every class and method, which are annotated by {@link SwitchExhaustive},
+ * covers all Enum constants in switch statement cases.
+ */
 public class SwitchExhaustiveCheckerProcessor extends AbstractProcessor {
     private final AnalyzeTaskListener analyzeTaskListener = new AnalyzeTaskListener(this);
     private final Map<Name, Boolean> remainingTypeElementNames = new HashMap<>();
@@ -33,7 +38,7 @@ public class SwitchExhaustiveCheckerProcessor extends AbstractProcessor {
         JavacTask.instance(processingEnv).addTaskListener(analyzeTaskListener);
     }
 
-    public void handleAnalyzedType(final TypeElement typeElement) {
+    void handleAnalyzedType(final TypeElement typeElement) {
         Boolean needProcessAllMethodsInClass = remainingTypeElementNames.remove(typeElement.getQualifiedName());
         if (needProcessAllMethodsInClass == null) {
             // we don't know this class, so we don't need to process it

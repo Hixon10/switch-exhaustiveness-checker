@@ -45,10 +45,22 @@ public class ClassWithEnum2ConstructorBad {
 }
 ```
 
+## How it works 
+An annotation processor `SwitchExhaustiveCheckerProcessor` processes all classes and methods, 
+which are annotated by `@SwitchExhaustive`. The processor finds all switch statements, 
+and after that verifies, that all `cases` for `Enum-constants` are covered.
+
+The annotation processor is executed as one of compilation step. Hence you can be sure, that 
+all `cases` for Enums are covered, if compilation process of your program has completed successfully.
+
+## How to build and upload a new version to maven central
+1. Specify correct credentials in `gradle.properties` (you can find it in the root folder of project).
+2. Execute `./gradlew clean build uploadArchives`
+
 ## Todo 
 
 - [ ] User friendly error messages
-- [ ] Publish annotation processor to maven central
+- [X] Publish annotation processor to maven central
 - [X] Unit tests for all possibly cases
 - [ ] Integration tests for gradle
 - [ ] Integration tests for maven
