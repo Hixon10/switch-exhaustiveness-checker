@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'maven'
+    id 'signing'
 }
 
 version '1.0'
@@ -8,15 +9,64 @@ version '1.0'
 java {
     withSourcesJar()
     withJavadocJar()
+
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+artifacts {
+    archives sourcesJar, javadocJar
+}
+
+signing {
+    useGpgCmd()
+    sign configurations.archives
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://s01.oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            println(project.conf2ScopeMappings.mappings)
+
+            pom.project {
+                name 'Switch Exhaustiveness Checker'
+                packaging 'jar'
+                description 'An annotation processor checks that you cover all switch cases for Enum constants in switch statements.'
+                url 'https://github.com/Hixon10/switch-exhaustiveness-checker'
+
+                scm {
+                    url 'https://github.com/Hixon10/switch-exhaustiveness-checker.git'
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        name 'Denis'
+                    }
+                }
+            }
+        }
+    }
 }
 
 repositories {
     mavenCentral()
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 group = "ru.hixon"
