@@ -7,7 +7,7 @@ However, there are a few "drawbacks" of it:
 1. You need to use `Java 14`, whereas this annotation processor allows you to have `Java 8`.
 2. `JEP 361` is implemented for `switch expressions` (which is totally fine, though), whereas this annotation processor allows you to have `switch statements` instead of. 
 
-## How to use
+## How to use in gradle
 
 1. Include to your project and enable `SwitchExhaustiveCheckerProcessor` annotation processor. For example, *for gradle*:
 ```groovy
@@ -25,6 +25,60 @@ dependencies {
 }
 ```
 2. Put annotation `ru.hixon.switchexhaustivenesschecker.SwitchExhaustive` to needed constructors, methods and classes:
+```java
+import ru.hixon.switchexhaustivenesschecker.SwitchExhaustive;
+
+@SwitchExhaustive
+public class ClassWithEnum2ConstructorBad {
+
+    public enum Enum2 {
+        EnumVal1,
+        EnumVal2
+    }
+
+    public ClassWithEnum2ConstructorBad(Enum2 enum2) {
+        switch (enum2) {
+            case EnumVal1:
+                break;
+        }
+    }
+}
+```
+
+## How to use in maven
+1. Add optional dependency to your dependencies:
+```xml
+<dependencies>
+    <dependency>
+        <groupId>ru.hixon</groupId>
+        <artifactId>switch-exhaustiveness-checker</artifactId>
+        <version>1.0</version>
+        <optional>true</optional>
+    </dependency>
+</dependencies>
+```
+
+2. Enable the annotation processor:
+```xml
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.10.1</version>
+            <configuration>
+                <annotationProcessors>
+                    <annotationProcessor>
+                        ru.hixon.switchexhaustivenesschecker.SwitchExhaustiveCheckerProcessor
+                    </annotationProcessor>
+                </annotationProcessors>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
+```
+
+3. Put annotation `ru.hixon.switchexhaustivenesschecker.SwitchExhaustive` to needed constructors, methods and classes:
 ```java
 import ru.hixon.switchexhaustivenesschecker.SwitchExhaustive;
 
@@ -66,7 +120,6 @@ all `cases` for Enums are covered, if compilation process of your program has co
 - [ ] Integration tests for maven
 - [ ] Integration tests for spring
 - [ ] Integration tests for different versions of Java
-- [ ] Documentation for how to use with maven
 
 ## Credits
 1. [https://github.com/svbrunov](https://github.com/svbrunov) - for helping with implementation of the processor.
