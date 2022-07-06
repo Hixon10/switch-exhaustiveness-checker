@@ -117,7 +117,7 @@ public class ClassWithEnum2Test extends BaseTest {
     public void methodWithMissedBranches4Test() throws IOException {
         final String className = "ClassWithEnum2MethodBad4";
         final String classPath = "/classtemplates/ClassWithEnum2MethodBad4.java";
-        final String errorMessage = "error: Some switch branches in class: ru.hixon.switchexhaustivenesschecker.test.data.ClassWithEnum2MethodBad4, method: someMethod are not covered4";
+        final String errorMessage = "error: Some switch branches in class: ru.hixon.switchexhaustivenesschecker.test.data.ClassWithEnum2MethodBad4, method: someMethod are not covered";
 
         withMissedBranchesBase(className, classPath, errorMessage);
     }
