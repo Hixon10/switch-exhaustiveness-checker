@@ -16,3 +16,19 @@ jobs:
           distribution: 'adopt'
       - name: Test with Gradle
         run: ./gradlew clean test -i
+  integrationtests:
+    runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        version: [ 8 ]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK ${{ matrix.version }}
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{ matrix.version }}
+          distribution: 'adopt'
+      - name: Run integration test - Java 11 + Spring + Gradle + Should Fail
+        run: ls
+      - name: Test change
+        run: cd ./integration-tests/java11-gradle-spring-fail && ./gradlew clean test -i
