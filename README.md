@@ -110,6 +110,7 @@ all `cases` for Enums are covered, if compilation process of your program has co
 ## How to build and upload a new version to maven central
 1. Specify correct credentials in `gradle.properties` (you can find it in the root folder of project).
 2. Execute `./gradlew clean build uploadArchives`
+3. Release the artifact - [https://central.sonatype.org/publish/release/](https://central.sonatype.org/publish/release/).
 
 ## Todo 
 
