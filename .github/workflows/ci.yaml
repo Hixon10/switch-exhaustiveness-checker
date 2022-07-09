@@ -26,6 +26,9 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
       - name: Run integration test - Java 11 + Spring + Gradle + Should Fail
-        run: ls
-      - name: Test change
         run: cd ./integration-tests/java11-gradle-spring-fail && ./gradlew clean test -i
+        id: java11-gradle-spring-fail
+        continue-on-error: true
+      - name: Check on failures
+        if: steps.java11-gradle-spring-fail.outcome != 'failure'
+        run: exit 1
