@@ -25,6 +25,9 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
+      - name: Run integration test - Java 11 + Spring + Gradle + Should Succeed
+        run: cd ./integration-tests/java11-gradle-spring-success && ./gradlew clean test -i
+        id: java11-gradle-spring-success
       - name: Run integration test - Java 11 + Spring + Gradle + Should Fail
         run: cd ./integration-tests/java11-gradle-spring-fail && ./gradlew clean test -i
         id: java11-gradle-spring-fail
