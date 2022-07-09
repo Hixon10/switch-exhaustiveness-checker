@@ -21,6 +21,6 @@ class AnalyzeTaskListener implements TaskListener {
             return;
         }
 
-        processor.handleAnalyzedType(e.getTypeElement());
+        processor.handleAnalyzedType(e.getTypeElement(), e.getCompilationUnit());
     }
 }

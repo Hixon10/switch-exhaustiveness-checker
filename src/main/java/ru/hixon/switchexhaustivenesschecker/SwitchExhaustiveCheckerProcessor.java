@@ -24,6 +24,8 @@ public class SwitchExhaustiveCheckerProcessor extends AbstractProcessor {
     private final Map<Name, Boolean> remainingTypeElementNames = new HashMap<>();
     private final Map<Name, Set<MethodTree>> annotatedMethodsInClasses = new HashMap<>();
 
+    private final Map<Name, TypeElement> nameToTypeElement = new HashMap<>();
+
     private Messager messager;
     private Trees trees;
 
@@ -38,27 +40,82 @@ public class SwitchExhaustiveCheckerProcessor extends AbstractProcessor {
         JavacTask.instance(processingEnv).addTaskListener(analyzeTaskListener);
     }
 
-    void handleAnalyzedType(final TypeElement typeElement) {
-        Boolean needProcessAllMethodsInClass = remainingTypeElementNames.remove(typeElement.getQualifiedName());
+    void handleAnalyzedType(final TypeElement eventTypeElement, final CompilationUnitTree compilationUnit) {
+        Name eventClassName = eventTypeElement.getQualifiedName();
+        Boolean needProcessAllMethodsInClass = remainingTypeElementNames.remove(eventClassName);
+        TypeElement typeElement = eventTypeElement;
+
         if (needProcessAllMethodsInClass == null) {
-            // we don't know this class, so we don't need to process it
-            return;
+            // maybe it is internal class, let's try to find it
+            Map.Entry<Name, Boolean> entry = findNeedProcessAllMethodsInClassForNestedClass(eventClassName.toString());
+            if (entry == null) {
+                // we don't know this class, so we don't need to process it
+                return;
+            }
+
+            needProcessAllMethodsInClass = entry.getValue();
+            eventClassName = entry.getKey();
+
+            // we want to get child type, instead of parent
+            typeElement = nameToTypeElement.getOrDefault(eventClassName, eventTypeElement);
         }
 
         final TreePath treePath = trees.getPath(typeElement);
 
-        Set<MethodTree> methodsForAnalysis = annotatedMethodsInClasses.remove(typeElement.getQualifiedName());
+        Set<MethodTree> methodsForAnalysis = annotatedMethodsInClasses.remove(eventClassName);
         if (needProcessAllMethodsInClass) {
             // null means that we need to process all methods
             methodsForAnalysis = null;
         }
 
-        processType(trees, typeElement, treePath, methodsForAnalysis);
+        processType(trees, typeElement, treePath, methodsForAnalysis, compilationUnit);
     }
 
-    private void processType(Trees trees, TypeElement typeElement, TreePath treePath, Set<MethodTree> methodsForAnalysis) {
-        final CompilationUnitTree compilationUnitTree = treePath.getCompilationUnit();
-        final TestMethodTreePathScanner treePathScanner = new TestMethodTreePathScanner(trees, compilationUnitTree, messager, methodsForAnalysis, typeElement.getQualifiedName());
+    /**
+     * map {@link this#remainingTypeElementNames} contains "a.b.C.D", and we got event about "a.b.C",
+     * we want to fallback to "a.b.C.D" in this case
+     *
+     * O(N) implementation, but who cares.
+     */
+    private Map.Entry<Name, Boolean> findNeedProcessAllMethodsInClassForNestedClass(final String prefixClassName) {
+        Iterator<Map.Entry<Name, Boolean>> iter = remainingTypeElementNames.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry<Name, Boolean> entry = iter.next();
+            final String fullClassName = entry.getKey().toString();
+            if (fullClassName.startsWith(prefixClassName)) {
+                final String suffixClassName = fullClassName.substring(prefixClassName.length());
+                if (!suffixClassName.isEmpty() && suffixClassName.charAt(0) == '.') {
+                    boolean found = true;
+                    for (int i = 1; i < suffixClassName.length(); i++) {
+                        // check that suffixClassName is valid className
+                        // we want to be sure, that it is inner class with exactly one level of nesting
+                        if (!Character.isJavaIdentifierPart(suffixClassName.charAt(i))) {
+                            found = false;
+                            break;
+                        }
+                    }
+
+                    if (found) {
+                        iter.remove();
+                        return entry;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private void processType(Trees trees, TypeElement typeElement, TreePath treePath, Set<MethodTree> methodsForAnalysis, CompilationUnitTree compilationUnit) {
+        final CompilationUnitTree compilationUnitTree;
+        if (treePath == null) {
+            // fallback for inner classes
+            compilationUnitTree = compilationUnit;
+        } else {
+            compilationUnitTree = treePath.getCompilationUnit();
+        }
+
+        final TestMethodTreePathScanner treePathScanner = new TestMethodTreePathScanner(trees, compilationUnitTree, messager, methodsForAnalysis, typeElement.getQualifiedName(), nameToTypeElement);
         treePathScanner.scan(compilationUnitTree, null);
     }
 
@@ -74,13 +131,16 @@ public class SwitchExhaustiveCheckerProcessor extends AbstractProcessor {
                         TypeElement declaringClass = (TypeElement) annotatedElement.getEnclosingElement();
                         Name className = declaringClass.getQualifiedName();
                         remainingTypeElementNames.putIfAbsent(className, false);
+                        nameToTypeElement.putIfAbsent(className, declaringClass);
 
                         annotatedMethodsInClasses.computeIfAbsent(className, ignored -> new HashSet<>())
                                         .add((MethodTree) trees.getTree(annotatedElement));
                         break;
                     case CLASS:
-                        Name currentClassName = ElementFilter.typesIn(Collections.singletonList(annotatedElement)).get(0).getQualifiedName();
+                        TypeElement currenTypeElement = ElementFilter.typesIn(Collections.singletonList(annotatedElement)).get(0);
+                        Name currentClassName = currenTypeElement.getQualifiedName();
                         remainingTypeElementNames.put(currentClassName, true);
+                        nameToTypeElement.putIfAbsent(currentClassName, currenTypeElement);
                         break;
                 }
             } catch (Exception e) {

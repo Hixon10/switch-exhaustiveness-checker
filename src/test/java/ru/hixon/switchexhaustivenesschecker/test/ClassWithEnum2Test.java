@@ -79,6 +79,33 @@ public class ClassWithEnum2Test extends BaseTest {
     }
 
     @Test
+    public void constructorWithMissedBranches9Test() throws IOException {
+        final String className = "ClassWithEnum2ConstructorBad9";
+        final String classPath = "/classtemplates/ClassWithEnum2ConstructorBad9.java";
+        final String errorMessage = "error: Some switch branches in class: ru.hixon.switchexhaustivenesschecker.test.data.ClassWithEnum2ConstructorBad9, method: ru.hixon.switchexhaustivenesschecker.test.data.ClassWithEnum2ConstructorBad9() are not covered";
+
+        withMissedBranchesBase(className, classPath, errorMessage);
+    }
+
+    @Test
+    public void constructorWithMissedBranches10Test() throws IOException {
+        final String className = "ClassWithEnum2ConstructorBad10";
+        final String classPath = "/classtemplates/ClassWithEnum2ConstructorBad10.java";
+        final String errorMessage = "error: Some switch branches in class: ru.hixon.switchexhaustivenesschecker.test.data.ClassWithEnum2ConstructorBad10.AnotherClass, method: ru.hixon.switchexhaustivenesschecker.test.data.ClassWithEnum2ConstructorBad10.AnotherClass() are not covered";
+
+        withMissedBranchesBase(className, classPath, errorMessage);
+    }
+
+    @Test
+    public void constructorWithMissedBranches11Test() throws IOException {
+        final String className = "ClassWithEnum2ConstructorBad11";
+        final String classPath = "/classtemplates/ClassWithEnum2ConstructorBad11.java";
+        final String errorMessage = "error: Some switch branches in class: ru.hixon.switchexhaustivenesschecker.test.data.ClassWithEnum2ConstructorBad11.AnotherClass, method: ru.hixon.switchexhaustivenesschecker.test.data.ClassWithEnum2ConstructorBad11.AnotherClass() are not covered";
+
+        withMissedBranchesBase(className, classPath, errorMessage);
+    }
+
+    @Test
     public void constructorWithoutMissedBranchesTest() throws IOException {
         final String className = "ClassWithEnum2ConstructorGood";
         final String classPath = "/classtemplates/ClassWithEnum2ConstructorGood.java";
@@ -123,6 +150,42 @@ public class ClassWithEnum2Test extends BaseTest {
     }
 
     @Test
+    public void methodWithMissedBranches5Test() throws IOException {
+        final String className = "ClassWithEnum2MethodBad5";
+        final String classPath = "/classtemplates/ClassWithEnum2MethodBad5.java";
+        final String errorMessage = "error: Some switch branches in class: ru.hixon.switchexhaustivenesschecker.test.data.ClassWithEnum2MethodBad5.AnotherClass, method: someMethod are not covered";
+
+        withMissedBranchesBase(className, classPath, errorMessage);
+    }
+
+    @Test
+    public void methodWithMissedBranches6Test() throws IOException {
+        final String className = "ClassWithEnum2MethodBad6";
+        final String classPath = "/classtemplates/ClassWithEnum2MethodBad6.java";
+        final String errorMessage = "error: Some switch branches in class: ru.hixon.switchexhaustivenesschecker.test.data.ClassWithEnum2MethodBad6.AnotherClass, method: someMethod are not covered";
+
+        withMissedBranchesBase(className, classPath, errorMessage);
+    }
+
+    @Test
+    public void methodWithMissedBranches7Test() throws IOException {
+        final String className = "ClassWithEnum2MethodBad7";
+        final String classPath = "/classtemplates/ClassWithEnum2MethodBad7.java";
+        final String errorMessage = "error: Some switch branches in class: ru.hixon.switchexhaustivenesschecker.test.data.ClassWithEnum2MethodBad7.AnotherClass, method: someMethod are not covered";
+
+        withMissedBranchesBase(className, classPath, errorMessage);
+    }
+
+    @Test
+    public void methodWithMissedBranches8Test() throws IOException {
+        final String className = "ClassWithEnum2MethodBad8";
+        final String classPath = "/classtemplates/ClassWithEnum2MethodBad8.java";
+        final String errorMessage = "error: Some switch branches in class: ru.hixon.switchexhaustivenesschecker.test.data.ClassWithEnum2MethodBad8, method: someMethod are not covered";
+
+        withMissedBranchesBase(className, classPath, errorMessage);
+    }
+
+    @Test
     public void methodWithoutMissedBranchesTest() throws IOException {
         final String className = "ClassWithEnum2MethodGood";
         final String classPath = "/classtemplates/ClassWithEnum2MethodGood.java";
@@ -150,6 +213,30 @@ public class ClassWithEnum2Test extends BaseTest {
     public void methodWithoutMissedBranches4Test() throws IOException {
         final String className = "ClassWithEnum2MethodGood4";
         final String classPath = "/classtemplates/ClassWithEnum2MethodGood4.java";
+
+        withoutMissedBranchesTest(className, classPath);
+    }
+
+    @Test
+    public void methodWithoutMissedBranches5Test() throws IOException {
+        final String className = "ClassWithEnum2MethodGood5";
+        final String classPath = "/classtemplates/ClassWithEnum2MethodGood5.java";
+
+        withoutMissedBranchesTest(className, classPath);
+    }
+
+    @Test
+    public void methodWithoutMissedBranches6Test() throws IOException {
+        final String className = "ClassWithEnum2MethodGood6";
+        final String classPath = "/classtemplates/ClassWithEnum2MethodGood6.java";
+
+        withoutMissedBranchesTest(className, classPath);
+    }
+
+    @Test
+    public void methodWithoutMissedBranches7Test() throws IOException {
+        final String className = "ClassWithEnum2MethodGood7";
+        final String classPath = "/classtemplates/ClassWithEnum2MethodGood7.java";
 
         withoutMissedBranchesTest(className, classPath);
     }

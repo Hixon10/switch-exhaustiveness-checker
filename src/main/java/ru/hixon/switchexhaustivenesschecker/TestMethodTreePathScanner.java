@@ -9,12 +9,14 @@ import javax.annotation.processing.Messager;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.Name;
+import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static javax.lang.model.element.ElementKind.ENUM_CONSTANT;
@@ -26,18 +28,21 @@ final class TestMethodTreePathScanner extends TreePathScanner<Void, Void> {
     private final Messager messager;
     private final Set<MethodTree> methodsForAnalysis;
     private final Name classForAnalysis;
+    private final Map<Name, TypeElement> classesForAnalysis;
 
     TestMethodTreePathScanner(
             final Trees trees,
             final CompilationUnitTree compilationUnitTree,
             final Messager messager,
             final Set<MethodTree> methodsForAnalysis,
-            final Name classForAnalysis) {
+            final Name classForAnalysis,
+            final Map<Name, TypeElement> classesForAnalysis) {
         this.trees = trees;
         this.compilationUnitTree = compilationUnitTree;
         this.messager = messager;
         this.methodsForAnalysis = methodsForAnalysis;
         this.classForAnalysis = classForAnalysis;
+        this.classesForAnalysis = classesForAnalysis;
     }
 
     @Override
@@ -50,6 +55,14 @@ final class TestMethodTreePathScanner extends TreePathScanner<Void, Void> {
             return null;
         }
 
+        if (!canProcessThisClass(methodTree)) {
+            // for inner classes we receive event from parent class.
+            // if we have several inner classes inside parent class,
+            // we don't want to process all inner classes,
+            // if only some of them are annotated with SwitchExhaustive
+            return null;
+        }
+
         for (final StatementTree statementTree : methodTree.getBody().getStatements()) {
             if (statementTree.getKind() != Tree.Kind.SWITCH) {
                 continue;
@@ -58,6 +71,22 @@ final class TestMethodTreePathScanner extends TreePathScanner<Void, Void> {
         }
 
         return null;
+    }
+
+    private boolean canProcessThisClass(MethodTree methodTree) {
+        TreePath treePath = TreePath.getPath(compilationUnitTree, methodTree);
+        String parentClassNameForMethod = trees.getElement(treePath).getEnclosingElement().toString();
+        // parentClassNameForMethod A.B
+        // A - yes
+        // A.B.C - no
+        boolean continueProcessing = false;
+        for (Name className : classesForAnalysis.keySet()) {
+            String cls = className.toString();
+            if (parentClassNameForMethod.equals(cls) || parentClassNameForMethod.startsWith(cls + '.')) {
+                continueProcessing = true;
+            }
+        }
+        return continueProcessing;
     }
 
     private void processCurrentSwitchStatement(SwitchTree statementTree, Name currentMethodName) {

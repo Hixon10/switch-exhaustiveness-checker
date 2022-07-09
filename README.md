@@ -19,8 +19,8 @@ repositories {
 
 dependencies {
     // ....
-    compileOnly 'ru.hixon:switch-exhaustiveness-checker:1.0'
-    annotationProcessor 'ru.hixon:switch-exhaustiveness-checker:1.0'
+    compileOnly 'ru.hixon:switch-exhaustiveness-checker:1.1'
+    annotationProcessor 'ru.hixon:switch-exhaustiveness-checker:1.1'
     // ...
 }
 ```
@@ -52,7 +52,7 @@ public class ClassWithEnum2ConstructorBad {
     <dependency>
         <groupId>ru.hixon</groupId>
         <artifactId>switch-exhaustiveness-checker</artifactId>
-        <version>1.0</version>
+        <version>1.1</version>
         <optional>true</optional>
     </dependency>
 </dependencies>
