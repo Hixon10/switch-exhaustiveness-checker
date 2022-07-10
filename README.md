@@ -78,6 +78,33 @@ public class ClassWithEnum2ConstructorBad {
 </build>
 ```
 
+If you use `Lombok`, you need explicitly enable both annotation processors:
+```xml
+<build>
+	<plugins>
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-compiler-plugin</artifactId>
+			<version>3.10.1</version>
+			<configuration>
+				<annotationProcessorPaths>
+					<path>
+						<groupId>ru.hixon</groupId>
+						<artifactId>switch-exhaustiveness-checker</artifactId>
+						<version>1.1</version>
+					</path>
+					<path>
+						<groupId>org.projectlombok</groupId>
+						<artifactId>lombok</artifactId>
+						<version>1.18.24</version>
+					</path>
+				</annotationProcessorPaths>
+			</configuration>
+		</plugin>
+	</plugins>
+</build>
+```
+
 3. Put annotation `ru.hixon.switchexhaustivenesschecker.SwitchExhaustive` to needed constructors, methods and classes:
 ```java
 import ru.hixon.switchexhaustivenesschecker.SwitchExhaustive;
@@ -117,7 +144,7 @@ all `cases` for Enums are covered, if compilation process of your program has co
 - [ ] User friendly error messages
 - [X] Publish annotation processor to maven central
 - [X] Unit tests for all possibly cases
-- [ ] Integration tests for gradle
+- [X] Integration tests for gradle
 - [ ] Integration tests for maven
 - [ ] Integration tests for spring
 - [ ] Integration tests for different versions of Java
