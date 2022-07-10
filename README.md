@@ -145,9 +145,9 @@ all `cases` for Enums are covered, if compilation process of your program has co
 - [X] Publish annotation processor to maven central
 - [X] Unit tests for all possibly cases
 - [X] Integration tests for gradle
-- [ ] Integration tests for maven
-- [ ] Integration tests for spring
-- [ ] Integration tests for different versions of Java
+- [X] Integration tests for maven
+- [X] Integration tests for spring
+- [X] Integration tests for different versions of Java
 
 ## Credits
 1. [https://github.com/svbrunov](https://github.com/svbrunov) - for helping with implementation of the processor.
