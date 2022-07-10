@@ -19,8 +19,8 @@ repositories {
 
 dependencies {
     // ....
-    compileOnly 'ru.hixon:switch-exhaustiveness-checker:1.1'
-    annotationProcessor 'ru.hixon:switch-exhaustiveness-checker:1.1'
+    compileOnly 'ru.hixon:switch-exhaustiveness-checker:1.2'
+    annotationProcessor 'ru.hixon:switch-exhaustiveness-checker:1.2'
     // ...
 }
 ```
@@ -36,13 +36,19 @@ public class ClassWithEnum2ConstructorBad {
         EnumVal2
     }
 
-    public ClassWithEnum2ConstructorBad(Enum2 enum2) {
+    public void foo(Enum2 enum2) {
         switch (enum2) {
             case EnumVal1:
                 break;
         }
     }
 }
+```
+
+3. You should see an error, like this:
+```
+src/main/java/ClassWithEnum2ConstructorBad.java:11: error: Switch branches: [EnumVal2] in class: [ClassWithEnum2ConstructorBad], method: [foo] are not covered
+    public void foo(Enum2 enum2) {
 ```
 
 ## How to use in maven
@@ -52,7 +58,7 @@ public class ClassWithEnum2ConstructorBad {
     <dependency>
         <groupId>ru.hixon</groupId>
         <artifactId>switch-exhaustiveness-checker</artifactId>
-        <version>1.1</version>
+        <version>1.2</version>
         <optional>true</optional>
     </dependency>
 </dependencies>
@@ -91,7 +97,7 @@ If you use `Lombok`, you need explicitly enable both annotation processors:
 					<path>
 						<groupId>ru.hixon</groupId>
 						<artifactId>switch-exhaustiveness-checker</artifactId>
-						<version>1.1</version>
+						<version>1.2</version>
 					</path>
 					<path>
 						<groupId>org.projectlombok</groupId>
@@ -138,16 +144,6 @@ all `cases` for Enums are covered, if compilation process of your program has co
 1. Specify correct credentials in `gradle.properties` (you can find it in the root folder of project).
 2. Execute `./gradlew clean build uploadArchives`
 3. Release the artifact - [https://central.sonatype.org/publish/release/](https://central.sonatype.org/publish/release/).
-
-## Todo 
-
-- [ ] User friendly error messages
-- [X] Publish annotation processor to maven central
-- [X] Unit tests for all possibly cases
-- [X] Integration tests for gradle
-- [X] Integration tests for maven
-- [X] Integration tests for spring
-- [X] Integration tests for different versions of Java
 
 ## Credits
 1. [https://github.com/svbrunov](https://github.com/svbrunov) - for helping with implementation of the processor.

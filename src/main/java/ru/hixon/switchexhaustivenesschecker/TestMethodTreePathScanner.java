@@ -14,10 +14,8 @@ import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static javax.lang.model.element.ElementKind.ENUM_CONSTANT;
 
@@ -104,35 +102,42 @@ final class TestMethodTreePathScanner extends TreePathScanner<Void, Void> {
             return;
         }
 
-        List<Element> enumValues = getEnumValuesForGivenEnum(enumElement);
-        int numberOfNonDefaultSwitchCases = getNumberOfNonDefaultSwitchCases(statementTree);
+        Set<String> enumValues = getEnumValuesForGivenEnum(enumElement);
+        Set<String> nonDefaultCoveredEnums = getNonDefaultCoveredSwitchCases(statementTree);
 
-        if (numberOfNonDefaultSwitchCases != enumValues.size()) {
-            String methodNameAsString = currentMethodName.toString();
-            if (methodNameAsString.equals("<init>")) {
+        if (nonDefaultCoveredEnums.size() != enumValues.size()) {
+            String methodOrConstructorStr = "method";
+            String methodOrConstructorNameAsString = currentMethodName.toString();
+            if (methodOrConstructorNameAsString.equals("<init>")) {
                 // fix constructor name
-                methodNameAsString = classForAnalysis + "()";
+                methodOrConstructorStr = "constructor";
+                methodOrConstructorNameAsString = classForAnalysis + "()";
             }
-            messager.printMessage(Diagnostic.Kind.ERROR, "Some switch branches in class: " + classForAnalysis + ", method: " + methodNameAsString + " are not covered", trees.getElement(treePath));
+
+            String nonCoveredEnumsAsStr = enumValues.stream()
+                    .filter(e -> !nonDefaultCoveredEnums.contains(e))
+                    .collect(Collectors.joining(", "));
+
+            messager.printMessage(Diagnostic.Kind.ERROR, "Switch branches: [" + nonCoveredEnumsAsStr + "] in class: [" + classForAnalysis + "], " + methodOrConstructorStr + ": [" + methodOrConstructorNameAsString + "] are not covered", trees.getElement(treePath));
         }
     }
 
-    private int getNumberOfNonDefaultSwitchCases(SwitchTree switchTree) {
-        int count = 0;
+    private Set<String> getNonDefaultCoveredSwitchCases(SwitchTree switchTree) {
+        Set<String> coveredEnums = new HashSet<>();
         for (CaseTree caseTree : switchTree.getCases()) {
             // we don't want to count default statement
             if (caseTree.getExpression() != null) {
-                count++;
+                coveredEnums.add(caseTree.getExpression().toString());
             }
         }
-        return count;
+        return coveredEnums;
     }
 
-    private List<Element> getEnumValuesForGivenEnum(Element enumElement) {
-        List<Element> enumConstants = new ArrayList<>();
+    private Set<String> getEnumValuesForGivenEnum(Element enumElement) {
+        Set<String> enumConstants = new HashSet<>();
         for (Element element : enumElement.getEnclosedElements()) {
             if (element.getKind() == ENUM_CONSTANT) {
-                enumConstants.add(element);
+                enumConstants.add(element.getSimpleName().toString());
             }
         }
         return enumConstants;
