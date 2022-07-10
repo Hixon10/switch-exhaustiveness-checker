@@ -15,8 +15,8 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 
-	implementation group: 'ru.hixon', name: 'switch-exhaustiveness-checker', version: '1.1'
-	annotationProcessor 'ru.hixon:switch-exhaustiveness-checker:1.1'
+	implementation group: 'ru.hixon', name: 'switch-exhaustiveness-checker', version: '1.2'
+	annotationProcessor 'ru.hixon:switch-exhaustiveness-checker:1.2'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
