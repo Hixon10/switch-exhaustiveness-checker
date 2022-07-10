@@ -32,6 +32,8 @@ public class DemoApplication {
 					TestResponse data = new TestResponse();
 					data.setScore("return from switch");
 					return data.getScore();
+				case Val2:
+					return "return from switch";
 			}
 
 			TestResponse data = new TestResponse();

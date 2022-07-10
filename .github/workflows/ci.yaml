@@ -82,6 +82,9 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
+      - name: Run integration test - Java 11 + Spring + Maven + Should Succeed
+        run: cd ./integration-tests/java11-gradle-spring-success && mvn clean install
+        id: java11-maven-spring-success
       - name: Run integration test - Java 11 + Spring + Maven + Should Fail
         run: cd ./integration-tests/java11-maven-spring-fail && mvn clean install
         id: java11-maven-spring-fail
